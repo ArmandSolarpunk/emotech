@@ -31,3 +31,10 @@ function getTime() {
 function finAquisition(){
   localStorage.removeItem("startTime")
 }
+  function startRecording() {
+    fetch('/start-recording');
+  }
+
+  function stopRecording() {
+    fetch('/stop-recording');
+  }

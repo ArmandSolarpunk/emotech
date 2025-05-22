@@ -7,8 +7,13 @@ if (index < listepeintures.length){
     illustration.textContent="Peinture " +index
 sessionStorage.setItem("indexBoucle", index);}
 else{
+
+    //stopRecording()
+
     illustration.textContent="C'est fini !"
+
     revelation.remove()
+    
     let situationoeil=getTableau("situationoeil")
     console.log(situationoeil)
     
