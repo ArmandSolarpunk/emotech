@@ -1,8 +1,13 @@
+const dgram = require('dgram');
 const express = require('express');
+const fs = require('fs');
+
+const udpServer = dgram.createSocket('udp4');
+
+
 
 const mongoose = require('mongoose');
 
-const Thing = require('./models/Emotech');
 const Emotech = require('./models/Emotech');
 
 mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5.mongodb.net/',
@@ -13,6 +18,11 @@ mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5
 
 const app = express();
 
+let isRecording = false;
+let dataBuffer= [];
+
+
+
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -20,6 +30,28 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
   next();
+});
+
+udpServer.on('message',(msg, rinfo)=>{
+    if(isRecording){
+        const data = msg.toString();
+        console.log('Data:${data}');
+        dataBuffer.push(data);
+    }
+});
+udpServer.bind(12346); // port oscillo
+
+app.get('/start-recording',(req,res,next)=>{
+    isRecording = true;
+    dataBuffer=[]; //vide le buffer
+    res.send('Enregistrement démarré');
+
+});
+
+app.get('/stop-recording',(req,res,next)=>{
+    isRecording = false;
+    fs.writeFileSync('emotibit_data.txt',dataBuffer.join('\n'));
+    res.send('Enregistrement arrété et données sauvgardées');
 });
 
 app.post('/api/emotion', (req, res, next) => {
