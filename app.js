@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 
 const Emotech = require('./models/Emotech');
 
+
 mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5.mongodb.net/',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
@@ -20,14 +21,6 @@ const app = express();
 
 let isRecording = false;
 let dataBuffer= [];
-
-const fs = require('fs');
-const urls = fs.readFileSync('liste_peintures.txt', 'utf-8')
-               .split(/\r?\n/)
-               .filter(Boolean);
-
-console.log(urls);
-
 
 
 app.use(express.json());
