@@ -21,6 +21,13 @@ const app = express();
 let isRecording = false;
 let dataBuffer= [];
 
+const fs = require('fs');
+const urls = fs.readFileSync('liste_peintures.txt', 'utf-8')
+               .split(/\r?\n/)
+               .filter(Boolean);
+
+console.log(urls);
+
 
 
 app.use(express.json());
@@ -50,14 +57,15 @@ app.get('/start-recording',(req,res,next)=>{
 
 app.get('/stop-recording',(req,res,next)=>{
     isRecording = false;
-    fs.writeFileSync('emotibit_data.txt',dataBuffer.join('\n'));
+    fs.writeFileSync('emotibit_data.csv',dataBuffer.join('\n'));
     res.send('Enregistrement arrété et données sauvgardées');
 });
 
 app.post('/api/emotion', (req, res, next) => {
     console.log("reçu : ",req.body);
    const emotech = new Emotech({
-    ...req.body
+    ...req.body,
+    //data:dataBuffer
    });
    emotech.save()
    .then(()=>res.status(201).json({message:"objet enregistré !"}))
