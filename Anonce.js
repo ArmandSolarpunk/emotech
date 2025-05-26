@@ -12,7 +12,8 @@ else{
 
     illustration.textContent="C'est fini !"
 
-    revelation.remove()
+    revelation.textContent = 'Acceuil'
+    revelation.href= 'plateform.html'
     
     let situationoeil=getTableau("situationoeil")
     console.log(situationoeil)
@@ -23,11 +24,15 @@ else{
     let emotionsResentis=getTableau("emotionsResentis")
     console.log(emotionsResentis)
 
+    let commentaires=getTableau("commentaires")
+    console.log(commentaires)
+
     let participant = {
     id : parseFloat(localStorage.getItem("startTime")),   
     situationoeil,
     timestamp,
-    emotionsResentis
+    emotionsResentis,
+    commentaires
 }
   fetch("http://localhost:3000/api/emotion", {
     method: "POST",

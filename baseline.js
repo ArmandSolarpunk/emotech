@@ -17,6 +17,9 @@ setTableau(timestamp,"timestamp")
 let emotionsResentis = []
 setTableau(emotionsResentis,"emotionsResentis")
 
+let commentaires = []
+setTableau(commentaires,"commentaires")
+
 setTimeout(() => {
   petitbambou.textContent = "Posez-vous un instant et Respirez";
 }, 5000);

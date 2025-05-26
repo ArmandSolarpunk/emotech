@@ -29,6 +29,7 @@ h2,legend{ font-family: "Impact";
     justify-content: center;
 }
 ol,p{
+    padding-left: 20px; ;
 font-family: "Oswald", sans-serif;
 font-size: large;
   font-optical-sizing: auto;
@@ -106,7 +107,7 @@ div,nav{
 .bloc{ 
 display: grid;
 grid-template-columns: 250px 250px 250px;
-grid-template-rows: 150px 150px 50px;
+grid-template-rows: 150px 150px;
 gap: 20px;
  
  text-align: center;
@@ -131,10 +132,6 @@ display: flex;
     opacity: 0.5;
 }
 
-.neutre{
-    grid-column-start: 1;
-    grid-column-end:4; 
-}
 .ON{
     color: green;
     border: 3px solid #8f5a22;
@@ -161,4 +158,10 @@ display: flex;
 flex-direction: column;
 margin: auto;
 padding:10px;
+}
+
+
+.neutre{
+    display:flex;
+    flex-direction: column;
 }

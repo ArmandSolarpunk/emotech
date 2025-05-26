@@ -1,11 +1,15 @@
 // situationoeil=[]  
 // timestamp = []
 // emotionsResentis = []
-listepeintures=[ "https://uploads3.wikiart.org/00123/images/charles-courtney-curran/in-the-luxembourg-garden-1889.jpg", 
+//commentaires=[]
+
+let listepeintures=[ "https://uploads3.wikiart.org/00123/images/charles-courtney-curran/in-the-luxembourg-garden-1889.jpg", 
   "https://uploads1.wikiart.org/images/keith-haring/the-marriage-of-heaven-and-hell-1984.jpg",
    "https://uploads3.wikiart.org/images/j-zsef-rippl-r-nai/uncle-piacsek-in-front-of-the-black-sideboard-1906.jpg", 
    "https://uploads2.wikiart.org/00124/images/vadym-meller/monk-for-the-play-mazeppa-1920.jpg"]
 
+
+console.log(urls);
 function setTableau(tableau, nomTableau){
 localStorage.setItem(nomTableau, JSON.stringify(tableau));
 }
