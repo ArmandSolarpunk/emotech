@@ -3,7 +3,7 @@ let body=document.querySelector("body")
 body.addEventListener("click",()=>{
   window.location.href = "Anonce.html"
 })
-//startRecording()
+startRecording()
 
 const temps=startTimer()
 console.log(temps)

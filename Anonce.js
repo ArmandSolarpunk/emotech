@@ -8,7 +8,7 @@ if (index < listepeintures.length){
 sessionStorage.setItem("indexBoucle", index);}
 else{
 
-    //stopRecording()
+    stopRecording()
 
     illustration.textContent="C'est fini !"
 
