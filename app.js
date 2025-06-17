@@ -1,25 +1,22 @@
-const dgram = require('dgram');
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const { exec } = require('child_process');
 const mongoose = require('mongoose');
-
+const { spawn } = require('child_process');
 const Emotech = require('./models/Emotech');
-const udpServer = dgram.createSocket('udp4');
 
 // Connexion MongoDB
-mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5.mongodb.net/',
+mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5.mongodb.net/', 
   { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 const app = express();
-let isRecording = false;
-let dataBuffer = [];
+let pythonProcess = null;
 
 app.use(express.json());
 
+// CORS Middleware
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
@@ -27,98 +24,116 @@ app.use((req, res, next) => {
   next();
 });
 
-// Réception des données UDP
-udpServer.on('message', (msg) => {
-  if (isRecording) {
-    const data = msg.toString();
-    console.log(`Data: ${data}`);
-    dataBuffer.push(data);
+// Enregistrement CSV depuis le front
+app.post('/save-csv', (req, res) => {
+  try {
+    const { situationoeil, timestamp, emotionsResentis, commentaires } = req.body;
+
+    let csvContent = 'situationoeil,timestamp,emotionsResentis,commentaires\n';
+    for (let i = 0; i < situationoeil.length; i++) {
+      csvContent += `"${situationoeil[i]}",${timestamp[i]},"${emotionsResentis[i]}","${commentaires[i]}"\n`;
+    }
+
+    const filePath = path.join(__dirname, 'data_platform.csv');
+    fs.writeFileSync(filePath, csvContent);
+
+    res.status(200).json({ message: 'CSV enregistré avec succès', filePath });
+  } catch (error) {
+    console.error('Erreur enregistrement CSV :', error);
+    res.status(500).json({ error: 'Erreur lors de l’enregistrement du CSV' });
   }
 });
-udpServer.bind(12346); // port oscillo
 
 // Démarrage de l'enregistrement
 app.get('/start-recording', (req, res) => {
-  isRecording = true;
-  dataBuffer = [];
-  res.send('Enregistrement démarré');
+  if (pythonProcess) {
+    return res.status(400).send('Le script Python est déjà en cours d\'exécution.');
+  }
+
+  pythonProcess = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/lsl_reader.py']);
+
+  pythonProcess.stdout.on('data', (data) => {
+    console.log(`Python output: ${data}`);
+  });
+
+  pythonProcess.stderr.on('data', (data) => {
+    console.error(`Python error: ${data}`);
+  });
+
+  pythonProcess.on('close', (code) => {
+    console.log(`Python script exited with code ${code}`);
+    pythonProcess = null;
+  });
+
+  res.send('Enregistrement démarré.');
 });
 
 // Arrêt de l'enregistrement + traitement
 app.get('/stop-recording', (req, res) => {
-  isRecording = false;
+  if (!pythonProcess) {
+    return res.status(400).send('Aucun script Python en cours d\'exécution.');
+  }
 
-  const timestamp = Date.now();
-  const filename = `emotibit_data_${timestamp}.csv`;
-  const rawDir = path.join(__dirname, 'raw');
-  const processedDir = path.join(__dirname, 'processed');
+  pythonProcess.kill();
+  pythonProcess = null;
+  console.log('Python script stopped.');
 
-  if (!fs.existsSync(rawDir)) fs.mkdirSync(rawDir);
-  if (!fs.existsSync(processedDir)) fs.mkdirSync(processedDir);
+  // Lancer le traitement Python
+  const pythonProcess2 = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/data_process.py']);
 
-  const rawPath = path.join(rawDir, filename);
-  const parsedPath = path.join(processedDir, filename.replace('.csv', '_Parsed.csv'));
-  const processedPath = path.join(processedDir, filename.replace('.csv', '_FinalProcessed.csv'));
+  pythonProcess2.stdout.on('data', (data) => {
+    console.log(`Python output: ${data}`);
+  });
 
-  // 1. Sauvegarder le fichier brut
-  fs.writeFileSync(rawPath, dataBuffer.join('\n'));
+  pythonProcess2.stderr.on('data', (data) => {
+    console.error(`Python error: ${data}`);
+  });
 
-  // 2. Appel du parser EmotiBit
-  const parserExe = `"C:\\Program Files\\EmotiBit\\EmotiBit DataParser\\EmotiBitDataParser.exe"`;
-  const parserCommand = `${parserExe} "${rawPath}"`;
+  pythonProcess2.on('close', async (code) => {
+    console.log(`Python script exited with code ${code}`);
 
-  exec(parserCommand, (err, stdout, stderr) => {
-    if (err) {
-      console.error('Erreur parsing EmotiBit :', stderr);
-      return res.status(500).send('Erreur parsing EmotiBit');
+    if (code !== 0) {
+      return res.status(500).json({ error: 'Erreur lors du traitement Python.' });
     }
 
-    console.log('Parsing terminé.');
+    try {
+      const platformData = fs.readFileSync(path.join(__dirname, 'data_platform.csv'), 'utf-8');
+      const rawData = fs.readFileSync(path.join(__dirname, 'raw.csv'), 'utf-8');
+      const cleanData = fs.readFileSync(path.join(__dirname, 'cleaned_data.csv'), 'utf-8');
+      const featureData = fs.readFileSync(path.join(__dirname, 'features_extracted.csv'), 'utf-8');
 
-    // 3. Lancer le script Python
-    const pythonCommand = `python science.py "${parsedPath}" "${processedPath}"`;
-
-    exec(pythonCommand, (err, stdout, stderr) => {
-      if (err) {
-        console.error('Erreur dans le script Python :', stderr);
-        return res.status(500).send('Erreur traitement Python');
-      }
-
-      console.log('Traitement Python terminé.');
-
-      // 4. Enregistrement dans MongoDB
       const emotech = new Emotech({
-      id: Date.now(), // ou tout autre identifiant unique que tu préfères
-      situationoeil: [],
-      timestamp: [],
-      emotionsResentis: [],
-      commentaires: [],
-      rawCsvPath: rawFile,
-      parsedCsvPath: parsedFolder,
-      processedCsvPath: processedFile
+        id: Date.now(),
+        plateform: platformData,
+        rawData: rawData,
+        CleanData: cleanData,
+        processedFeatures: featureData
       });
 
-      emotech.save()
-        .then(() => res.send('Enregistrement complet : brut, parsé, traité, et sauvegardé !'))
-        .catch(error => {
-          console.error("Erreur MongoDB :", error);
-          res.status(500).send("Erreur lors de l'enregistrement MongoDB");
-        });
-    });
+      await emotech.save();
+      console.log('Données enregistrées dans MongoDB.');
+
+      res.send('Traitement terminé et données enregistrées dans MongoDB.');
+    } catch (err) {
+      console.error('Erreur sauvegarde MongoDB :', err);
+      res.status(500).json({ error: 'Erreur lors de la sauvegarde dans MongoDB. Vérifiez que tous les fichiers CSV existent.' });
+    }
   });
 });
 
-// Enregistrement manuel de données
+// Enregistrement manuel
 app.post('/api/emotion', (req, res) => {
-  console.log("Reçu :", req.body);
+  console.log('Reçu :', req.body);
+
   const emotech = new Emotech({ ...req.body });
+
   emotech.save()
-    .then(() => res.status(201).json({ message: "Objet enregistré !" }))
+    .then(() => res.status(201).json({ message: 'Objet enregistré !' }))
     .catch(error => res.status(400).json({ error }));
 });
 
 // Récupération de toutes les entrées
-app.use('/api/emotion', (req, res) => {
+app.get('/api/emotion', (req, res) => {
   Emotech.find()
     .then(emotechs => res.status(200).json(emotechs))
     .catch(error => res.status(400).json({ error }));

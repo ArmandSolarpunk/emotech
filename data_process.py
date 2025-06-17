@@ -3,10 +3,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy.signal import butter, filtfilt, find_peaks
+import subprocess
 
 
 # Lecture des données
-data = pd.read_csv("raw.csv")
+data = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/raw.csv", on_bad_lines='skip')
 def remov_error(df):
     target_names = ['PPG_RED','PPG_IR','PPG_GRN', 'EDA', 'TEMP1']
     mask = df['Type'].isin(target_names)
@@ -99,10 +100,10 @@ def visualisation(df, signal):
     plt.grid()
     plt.show()
 
-def comparaison(df, signal, signal2,signal3):
+def comparaison(df, signal, signal2,signal3=None):
     sns.lineplot(x=df['Time'], y=df[signal2], label=signal2)
     sns.lineplot(x=df['Time'], y=df[signal], label=signal)
-    sns.lineplot(x=df['Time'], y=df[signal3], label=signal3)
+    #sns.lineplot(x=df['Time'], y=df[signal3], label=signal3)
     plt.xlabel('Time (ms)')
     plt.title('cleaned signal')
     plt.grid()
@@ -111,9 +112,13 @@ def comparaison(df, signal, signal2,signal3):
 # Pipeline de traitement
 data = remov_error(data)
 data = reset_time(data)
+
 data = heart_rate(data,'PPG_RED')
 data = heart_rate(data,'PPG_IR')
 data = heart_rate(data,'PPG_GRN')
+data = sup_bruit(data, 'PPG_RED', True, 10, 2)
+data = sup_bruit(data, 'PPG_GRN', True, 10, 2)
+data = sup_bruit(data, 'PPG_IR', True, 10, 2)
 data = sup_bruit(data, 'EDA', False, 10, 2)
 data = sup_bruit(data, 'TEMP1', True, 10, 2)
 data = sup_bruit(data, 'PPG_IR_HR', True, 10, 2)
@@ -124,4 +129,58 @@ data = sup_bruit(data, 'PPG_GRN_IBI',True, 10, 2)
 data = sup_bruit(data, 'PPG_RED_IBI', True, 10, 2)
 # data = sup_bruit(data, 'HR', False, 200, 1)
 
+#comparaison(data,'','')
+#visualisation(data,'PPG_GRN_HR_brut')
+
 data.to_csv('cleaned_data.csv', index=False)
+
+print("process terminé")
+subprocess.run(['python', 'C:/Users/arman/Desktop/Premierprojet/backend/feature_extraction.py'])
+
+
+"""
+EDA : epidermal activity traité 
+
+PPG_GRN : niveau du PPG vert
+
+PPG_IR : niveau du PPG infrarouge
+
+PPG_RED : niveau du PPG rouge
+
+TEMP1: niveau de température traité 
+
+PPG_RED_HR : Heartrate vert lissé
+
+PPG_RED_IBI : interval inter battement rouge lissé
+
+PPG_IR_HR : Heartrate vert lissé
+
+PPG_IR_IBI : interval inter battement rouge lissé
+
+PPG_GRN_HR : Heartrate vert lissé
+
+PPG_GRN_IBI : interval inter battement rouge lissé
+
+PPG_RED_brut,
+
+PPG_GRN_brut,
+
+PPG_IR_brut,
+
+EDA_brut: epidermal activity traité 
+
+TEMP1_brut: niveau de température bruité
+
+PPG_IR_HR_brut : Heartrate infrarouge non lissé
+
+PPG_GRN_HR_brut : Heartrate vert non lissé
+
+PPG_RED_HR_brut: Heartrate rouge non lissé
+
+PPG_IR_IBI_brut: interval inter battement infrarouge non lissé
+
+PPG_GRN_IBI_brut : interval inter battement vert non lissé
+
+PPG_RED_IBI_brut : interval inter battement rouge non lissé
+
+"""
