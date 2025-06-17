@@ -35,10 +35,20 @@ function getTime() {
 function finAquisition(){
   localStorage.removeItem("startTime")
 }
-  function startRecording() {
-    fetch('/start-recording');
-  }
 
-  function stopRecording() {
-    fetch('/stop-recording');
-  }
+function startRecording() {
+    fetch('http://localhost:3000/start-recording')
+      .then(response => response.text())
+      .then(data => {
+          console.log('Réponse serveur :', data);
+          alert('Enregistrement démarré !');
+      })
+      .catch(error => console.error('Erreur :', error));
+}
+
+function stopRecording() {
+    fetch('http://localhost:3000/stop-recording')
+      .then(response => response.text())
+      .then(data => console.log(data))
+      .catch(error => console.error('Erreur :', error));
+}

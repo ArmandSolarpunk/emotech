@@ -2,15 +2,11 @@ let illustration=document.querySelector("h1")
 let revelation=document.querySelector("a")
 console.log(illustration)
 let index = parseInt(sessionStorage.getItem("indexBoucle"))
-index++
 if (index < listepeintures.length){
-    illustration.textContent="Peinture " +index
-sessionStorage.setItem("indexBoucle", index);}
+    illustration.textContent="Peinture " + (index+1);}
 else{
 
-    stopRecording()
-
-    illustration.textContent="C'est fini !"
+    illustration.textContent="The End"
 
     revelation.textContent = 'Acceuil'
     revelation.href= 'plateform.html'
@@ -34,18 +30,17 @@ else{
     emotionsResentis,
     commentaires
 }
-  fetch("http://localhost:3000/api/emotion", {
+fetch("http://localhost:3000/save-csv", {
     method: "POST",
     headers: {
       "Content-Type": "application/json"
     },
     body: JSON.stringify(participant)
-  })
-  .then(res => res.json())
-  .then(data => { console.log("Réponse du serveur :", data);
-    alert("Objet envoyé !");
-  })
-  .catch(error => {
-    console.error("Erreur :", error);
-  });
+})
+.then(res => res.json())
+.then(data => { console.log("CSV enregistré :", data); })
+.catch(error => { console.error("Erreur :", error); });
+
+
+  stopRecording()
 }
