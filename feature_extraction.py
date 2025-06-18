@@ -77,6 +77,28 @@ def feature_extraction(df, timestamps, emotions):
 
     return pd.DataFrame(all_features)
 
+def variation_relative(df):
+    # Récupérer la baseline (assumée être la première ligne)
+    baseline = df[df['emotion'] == 0].iloc[0]
+
+    variations = []
+
+    for i in range(len(df)):
+        row = df.iloc[i]
+
+        # On ne calcule pas la variation pour la baseline elle-même
+        if row['emotion'] == 0:
+            continue
+
+        variation = (row.drop('emotion') - baseline.drop('emotion')) / (baseline.drop('emotion') + 1e-6)  # epsilon pour éviter division par 0
+        variation['emotion'] = row['emotion']
+        variations.append(variation)
+
+    return pd.DataFrame(variations)
+
+        
+
+
 if __name__ == '__main__':
     # Exemple d'initialisation
     data = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/cleaned_data.csv")
@@ -87,8 +109,9 @@ if __name__ == '__main__':
 
     # Exemple d'utilisation
     features_df = feature_extraction(data, timestamps, emotions)
-
+    variations_df = variation_relative(features_df)
     # Export
     features_df.to_csv('features_extracted.csv', index=False)
+    variations_df.to_csv('relative_features.csv', index=False)
 
     print("fin du feature extraction")

@@ -43,6 +43,30 @@ app.post('/save-csv', (req, res) => {
     res.status(500).json({ error: 'Erreur lors de l’enregistrement du CSV' });
   }
 });
+// Création du dossier sécurisé local
+const saveLocalData = (userId) => {
+  const baseDir = path.join(__dirname, 'base_de_donnee', `user_${userId}_${Date.now()}`);
+
+  // Créer le dossier s'il n'existe pas
+  if (!fs.existsSync(baseDir)) {
+    fs.mkdirSync(baseDir, { recursive: true });
+  }
+
+  // Copier les fichiers dans ce dossier
+  const files = ['data_platform.csv', 'raw.csv', 'cleaned_data.csv', 'features_extracted.csv', 'relative_features.csv'];
+
+  files.forEach(file => {
+    const srcPath = path.join(__dirname, file);
+    const destPath = path.join(baseDir, file);
+
+    if (fs.existsSync(srcPath)) {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  });
+
+  console.log(`Données sauvegardées localement dans ${baseDir}`);
+  return baseDir;
+};
 
 // Démarrage de l'enregistrement
 app.get('/start-recording', (req, res) => {
@@ -101,17 +125,22 @@ app.get('/stop-recording', (req, res) => {
       const rawData = fs.readFileSync(path.join(__dirname, 'raw.csv'), 'utf-8');
       const cleanData = fs.readFileSync(path.join(__dirname, 'cleaned_data.csv'), 'utf-8');
       const featureData = fs.readFileSync(path.join(__dirname, 'features_extracted.csv'), 'utf-8');
+      const VarFeatureData = fs.readFileSync(path.join(__dirname, 'relative_features.csv'), 'utf-8');
 
       const emotech = new Emotech({
         id: Date.now(),
         plateform: platformData,
         rawData: rawData,
         CleanData: cleanData,
-        processedFeatures: featureData
+        processedFeatures: featureData,
+        variationFeatures: VarFeatureData
       });
 
       await emotech.save();
       console.log('Données enregistrées dans MongoDB.');
+      
+      const localPath = saveLocalData(emotech.id);
+      console.log(`Données également sauvegardées dans le dossier local : ${localPath}`);
 
       res.send('Traitement terminé et données enregistrées dans MongoDB.');
     } catch (err) {
