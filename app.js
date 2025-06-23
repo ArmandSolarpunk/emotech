@@ -30,7 +30,9 @@ app.post('/save-csv', (req, res) => {
     const { situationoeil, timestamp, emotionsResentis, commentaires } = req.body;
 
     let csvContent = 'situationoeil,timestamp,emotionsResentis,commentaires\n';
-    for (let i = 0; i < situationoeil.length; i++) {
+
+    // changer ici en cas de problème avec la longueur du tableau 
+    for (let i = 0; i < timestamp.length; i++) {
       csvContent += `"${situationoeil[i]}",${timestamp[i]},"${emotionsResentis[i]}","${commentaires[i]}"\n`;
     }
 

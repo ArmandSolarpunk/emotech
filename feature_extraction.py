@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from scipy.signal import find_peaks
+from scipy.signal import find_peaks, welch
 import os
 
 # Dictionnaire d'encodage
@@ -102,7 +102,7 @@ def variation_relative(df):
 if __name__ == '__main__':
     # Exemple d'initialisation
     data = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/cleaned_data.csv")
-    plateforme = pd.read_csv("C:/Users/arman\Desktop/Premierprojet/backend/data_platform.csv")
+    plateforme = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/data_platform.csv")
     timestamps = pd.to_numeric(plateforme['timestamp'], errors='coerce').dropna()
     emotions = plateforme['emotionsResentis'].dropna()
     emotions = emotions[emotions.str.lower() != 'undefined']
