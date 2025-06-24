@@ -8,7 +8,7 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-data =  pd.read_csv('relative_features.csv')
+data =  pd.read_csv('machineLearning.csv')
 
 X = data[['EDA_mean,EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_IR_std','PPG_RED_mean','PPG_RED_std','TEMP1_mean','TEMP1_std','PPG_IR_HR_brut_mean','PPG_IR_HR_brut_std','PPG_IR_HR_brut_rmssd','PPG_GRN_HR_brut_mean','PPG_GRN_HR_brut_std','PPG_GRN_HR_brut_rmssd','PPG_RED_HR_brut_mean','PPG_RED_HR_brut_std','PPG_RED_HR_brut_rmssd','PPG_IR_IBI_brut_mean','PPG_IR_IBI_brut_std','PPG_IR_IBI_brut_rmssd','PPG_GRN_IBI_brut_mean','PPG_GRN_IBI_brut_std','PPG_GRN_IBI_brut_rmssd','PPG_RED_IBI_brut_mean','PPG_RED_IBI_brut_std','PPG_RED_IBI_brut_rmssd']]
 y = data.emotion.values
