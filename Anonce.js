@@ -1,9 +1,22 @@
+/**
+ * Fichier : Annonce.js
+ * 
+ * Description : ce fichier permet de préparer le spéctateur à la vud'une image avant qu'il la voit vraiment 
+ * Sert aussi de fin d'experience  
+ * 
+ * Navigation : redirection vers la baseline une fois le quetionnair envoyé et appui du bouton 
+ */
+
+//selection des éléments html
 let illustration=document.querySelector("h1")
 let revelation=document.querySelector("a")
-console.log(illustration)
+
+//change le numero de la peinture 
 let index = parseInt(sessionStorage.getItem("indexBoucle"))
 if (index < listepeintures.length){
     illustration.textContent="Peinture " + (index+1);}
+
+// Si il n'y a plus de peinture on passe sur la page de fin     
 else{
 
     illustration.textContent="The End"
@@ -11,6 +24,7 @@ else{
     revelation.textContent = 'Acceuil'
     revelation.href= 'plateform.html'
     
+    // Récuperation de toutres les informations données précédements
     let situationoeil=getTableau("situationoeil")
     console.log(situationoeil)
     
@@ -22,6 +36,7 @@ else{
 
     let commentaires=getTableau("commentaires")
     console.log(commentaires)
+//création d'un objet participant avec tous les tableaux 
 
     let participant = {
     id : parseFloat(localStorage.getItem("startTime")),   
@@ -29,6 +44,8 @@ else{
     timestamp,
     emotionsResentis,
     commentaires
+
+// on envoie l'objet au serveur Nodemon pour qu'il soit traité     
 }
 fetch("http://localhost:3000/save-csv", {
     method: "POST",
@@ -41,6 +58,6 @@ fetch("http://localhost:3000/save-csv", {
 .then(data => { console.log("CSV enregistré :", data); })
 .catch(error => { console.error("Erreur :", error); });
 
-
+// arret de l'enregistrement voir app.js
   stopRecording()
 }

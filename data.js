@@ -1,8 +1,22 @@
-// situationoeil=[]  
-// timestamp = []
-// emotionsResentis = []
-//commentaires=[]
+/**
+ * Fichier : data.js
+ * 
+ * Description : contient les principales fonctions utilisées par la plateforme web 
+ * la liste des tableaux utilisées pour l'expérience 
+ * ainsi que des rapelles des noms de listes utilisés pour le local storage 
+ * 
+ */
 
+/**
+ * Rappels Local storage
+ * 
+ * situationoeil=[]  
+ * timestamp = []
+ * emotionsResentis = []
+ * commentaires=[]
+ */
+
+// liste des tableaux pour l'expérience 
 let listepeintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-spanking-the-christ-child-before-three-witnesses-andre-breton-paul-eluard-and-the-1926.jpg",
    "https://uploads0.wikiart.org/00130/images/david-morier/the-battle-of-culloden-1746.jpg",
     "https://uploads3.wikiart.org/images/francisco-goya/execution-of-the-defenders-of-madrid-3rd-may-1808-1814.jpg", 
@@ -24,12 +38,13 @@ let listepeintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-sp
     "https://uploads3.wikiart.org/images/rene-magritte/collective-invention-1934(1).jpg",
      "https://uploads1.wikiart.org/images/roger-de-la-fresnaye/man-with-a-red-kerchief-1922.jpg"]
 
-
+//fonction de definition d'un objet dans le local storage 
 console.log(urls);
 function setTableau(tableau, nomTableau){
 localStorage.setItem(nomTableau, JSON.stringify(tableau));
 }
 
+// fonction de récupération d'un objet dans le local storage 
 function getTableau(nomTableau){
 let tableauRecupere = JSON.parse(localStorage.getItem(nomTableau));
 return tableauRecupere
@@ -48,10 +63,12 @@ function getTime() {
   return Date.now() - startTime;
 }
 
+
 function finAquisition(){
   localStorage.removeItem("startTime")
 }
 
+// fonction qui communique avec le serveur nodemon et va demarer sur l'app le début de l'aquisition de données 
 function startRecording() {
     fetch('http://localhost:3000/start-recording')
       .then(response => response.text())
@@ -61,6 +78,7 @@ function startRecording() {
       .catch(error => console.error('Erreur :', error));
 }
 
+// fonction qui communique avec le serveur nodemon et va demarer sur l'app le début de l'aquisition de données 
 function stopRecording() {
     fetch('http://localhost:3000/stop-recording')
       .then(response => response.text())
