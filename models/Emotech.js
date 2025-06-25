@@ -1,3 +1,10 @@
+/**
+ * fichier : Emotech.js
+ * 
+ * description : Modèle de ce que l'on va envoyer dans la base Mongo DB 
+ * on transforme tous les fichier en chaine de caractères 
+ * 
+ */
 const mongoose = require('mongoose');
 
 const emotechSchema = mongoose.Schema({

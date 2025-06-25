@@ -1,3 +1,11 @@
+"""
+Fichier: lsl_reader.py
+
+description: ce fichier permet de lire le flux lsl provenant du EmotiBit Oscilloscope
+Il est immportant de sélectionner l'output LSL sur le EmotiBit Oscilloscope pour que le flux puisse être lu
+
+navigation: une fois lancé par app.js ce script va être arrêté de la même façon automatiquement
+"""
 from pylsl import StreamInlet, resolve_streams
 import threading
 import csv
@@ -19,6 +27,7 @@ def listen_to_stream(info):
     with open(csv_file, mode='a', newline='') as file:
         writer = csv.writer(file)
 
+        # Récupération et print du sample du tipe de valeur et du temps depuis l'allumage du dispositif
         while True:
             sample, timestamp = inlet.pull_sample()
             writer.writerow([info.name(), timestamp, sample[0]])
@@ -30,7 +39,7 @@ if __name__ == "__main__":
     print(" Recherche de flux LSL...")
     streams = resolve_streams()
 
-    # Adapter le filtre avec les noms exacts que tu as détectés
+    # Adapter le filtre avec les noms exacts des cannaux voulu, plus d'informations sur le get started de EmotiBit 
     target_names = ['PPG_RED','PPG_IR','PPG_GRN', 'EDA', 'TEMP1']
 
     found = False

@@ -41,10 +41,10 @@ def sup_bruit(df, signal,lisse, window, limitation):
         df[signal]=  df[signal].ewm(span=30, adjust=False).mean()
     df[signal] = df[signal].interpolate()
     return df
-
+#fonction de detection des pics sur le signakl qui corréspondent aux battements cardiaques 
 def detect_peaks_ppg(df,signal):
     df[signal] = df[signal].interpolate()
-    peaks,_ =find_peaks(df[signal], distance=10)
+    peaks,_ =find_peaks(df[signal], distance=10) #distance minimale entre chaque intervalle 
     #plt.plot(df['Time'].iloc[peaks], df[signal].iloc[peaks], "x")
     return peaks
 
@@ -82,6 +82,7 @@ def heart_rate(df, signal):
     df[f'{signal}_HR'] = np.nan
     df[f'{signal}_IBI'] = np.nan
 
+    # On affecte la IBI aux positions des pics, sauf le premier (car pas d'intervalle)
     for i in range(1, len(peaks)):
         df.at[peaks[i], f'{signal}_IBI'] = rr_intervals[i - 1]
     # On affecte la HR aux positions des pics, sauf le premier (car pas d'intervalle)
@@ -91,6 +92,7 @@ def heart_rate(df, signal):
     # Optionnel : interpolation pour un affichage plus continu
     return df
 
+#fonctions de visualisation pour verifier les signaux 
 
 def visualisation(df, signal):
     sns.lineplot(x=df['Time'], y=df[signal])

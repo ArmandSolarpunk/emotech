@@ -1,8 +1,3 @@
 node_modules
 EmotiBit
-cleaned_data.csv
-data_platform.csv
-features_extracted.csv
-raw.csv
-relative_features.csv
 .venv
