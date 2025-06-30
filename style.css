@@ -107,9 +107,10 @@ div,nav{
 }
 
 .bloc{ 
+    background-image: url("https://images.squarespace-cdn.com/content/v1/60d2550de332b22f60eec9f4/351f0649-7243-4384-a878-d329ff8b752a/Plasant+%282%29.png");
 display: grid;
-grid-template-columns: 250px 250px 250px;
-grid-template-rows: 150px 150px;
+grid-template-columns: 250px 250px;
+grid-template-rows: 250px 250px;
 gap: 20px;
  
  text-align: center;
@@ -118,6 +119,7 @@ gap: 20px;
 
 .boutonemotion{
 display: flex;
+padding: 10PX;
  align-items: center;
  text-align: center;
   justify-content: center;
@@ -166,4 +168,11 @@ padding:10px;
 .neutre{
     display:flex;
     flex-direction: column;
+}
+
+.bool{ 
+display: flex;
+ flex-direction: row;
+ text-align: center;
+  justify-content: center;
 }

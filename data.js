@@ -14,9 +14,15 @@
  * timestamp = []
  * emotionsResentis = []
  * commentaires=[]
+ * 
+ * version
+ * score = []
+ * 
  */
 
-// liste des tableaux pour l'expérience 
+// listes des tableaux pour l'expérience
+let liste2peintures=["https://morganmarine.com/wp-content/uploads/2019/10/Screenshot-2019-10-01-at-10.48.39.jpg"]
+
 let listepeintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-spanking-the-christ-child-before-three-witnesses-andre-breton-paul-eluard-and-the-1926.jpg",
    "https://uploads0.wikiart.org/00130/images/david-morier/the-battle-of-culloden-1746.jpg",
     "https://uploads3.wikiart.org/images/francisco-goya/execution-of-the-defenders-of-madrid-3rd-may-1808-1814.jpg", 
@@ -37,6 +43,12 @@ let listepeintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-sp
     "https://uploads5.wikiart.org/images/peter-phillips/spectrocoupling-1972.jpg", 
     "https://uploads3.wikiart.org/images/rene-magritte/collective-invention-1934(1).jpg",
      "https://uploads1.wikiart.org/images/roger-de-la-fresnaye/man-with-a-red-kerchief-1922.jpg"]
+
+
+
+const version = parseFloat(localStorage.getItem("version"));
+
+
 
 //fonction de definition d'un objet dans le local storage 
 console.log(urls);
@@ -85,3 +97,39 @@ function stopRecording() {
       .then(data => console.log(data))
       .catch(error => console.error('Erreur :', error));
 }
+
+function baseline(){
+      fetch('http://localhost:3000/baseline')
+      .then(response => response.text())
+      .then(data => {
+          console.log('Réponse serveur :', data);
+      })
+      .catch(error => console.error('Erreur :', error));
+}
+
+function stopBaseline(){
+      fetch('http://localhost:3000/stopBaseline')
+      .then(response => response.text())
+      .then(data => {
+          console.log('Réponse serveur :', data);
+      })
+      .catch(error => console.error('Erreur :', error));
+    }
+
+function startDetection(){
+      fetch('http://localhost:3000/startDetection')
+      .then(response => response.text())
+      .then(data => {
+          console.log('Réponse serveur :', data);
+      })
+      .catch(error => console.error('Erreur :', error));
+    }
+
+function stopDetection(){
+      fetch('http://localhost:3000/stopDetection')
+      .then(response => response.text())
+      .then(data => {
+          console.log('Réponse serveur :', data);
+      })
+      .catch(error => console.error('Erreur :', error));
+    }

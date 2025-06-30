@@ -15,16 +15,14 @@ body.addEventListener("click",()=>{
   window.location.href = "Anonce.html"
 })
 
-// communication avec le serveur pour le lancer 
-startRecording()
 
-//recupératione du temps 0
+if(version==0){
+  // communication avec le serveur pour le lancer 
+  startRecording()
+  
+  //recupératione du temps 0
 const temps=startTimer()
 console.log(temps)
-
-//ammorce de l'indice d'avancement 
-let index=0
-sessionStorage.setItem("indexBoucle", index);
 
 // reset des tableaux dans le local storage 
 let timestamp = []
@@ -35,13 +33,24 @@ setTableau(emotionsResentis,"emotionsResentis")
 
 let commentaires = []
 setTableau(commentaires,"commentaires")
+}
 
+
+else{
+  baseline()
+  let score = []
+  setTableau(score,"score")
+}
+
+//ammorce de l'indice d'avancement 
+let index=0
+sessionStorage.setItem("indexBoucle", index);
 // Messages petit bambou qui popent régulièrement 
 setTimeout(() => {
   petitbambou.textContent = "Posez-vous un instant et Respirez";
 }, 5000);
 setTimeout(() => {
-  petitbambou.textContent = "Il y a rien faire, que écouter votre souffle";
+  petitbambou.textContent = "Il y a rien à faire, que écouter votre souffle";
 }, 10000);
 setTimeout(() => {
   petitbambou.textContent = " Écouter le silence";
@@ -57,3 +66,7 @@ setTimeout(() => {
 setTimeout(() => {
   window.location.href = "Anonce.html";
 }, 30000);
+
+if(version==1){
+  stopBaseline()
+}

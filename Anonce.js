@@ -8,12 +8,19 @@
  */
 
 //selection des éléments html
+if (version == 0){
+  liste_peintures = listepeintures
+}
+else{
+  liste_peintures = liste2peintures
+}
+
 let illustration=document.querySelector("h1")
 let revelation=document.querySelector("a")
 
 //change le numero de la peinture 
 let index = parseInt(sessionStorage.getItem("indexBoucle"))
-if (index < listepeintures.length){
+if (index < liste_peintures.length){
     illustration.textContent="Peinture " + (index+1);}
 
 // Si il n'y a plus de peinture on passe sur la page de fin     
@@ -21,9 +28,11 @@ else{
 
     illustration.textContent="The End"
 
-    revelation.textContent = 'Acceuil'
+    revelation.textContent = 'Accueil'
     revelation.href= 'plateform.html'
+
     
+    if (version == 0){
     // Récuperation de toutres les informations données précédements
     let situationoeil=getTableau("situationoeil")
     console.log(situationoeil)
@@ -60,4 +69,5 @@ fetch("http://localhost:3000/save-csv", {
 
 // arret de l'enregistrement voir app.js
   stopRecording()
+}
 }

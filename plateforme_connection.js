@@ -14,15 +14,28 @@ let suite = document.getElementById("suite")
 emotech_connection.addEventListener("click",()=> {    
     if (emotech_connection.textContent==="OFF"){
         emotech_connection.classList.add("ON")
-    emotech_connection.classList.remove("OFF")
-    emotech_connection.textContent="ON"
-    suite.setAttribute("href","test_vision.html")
+        emotech_connection.classList.remove("OFF")
+        emotech_connection.textContent="ON"
+        if (version ==0){
+            suite.setAttribute("href","test_vision.html")
+        }
+        else{
+            suite.setAttribute("href","baseline.html")
+        }
+
+    
 }
 // ça sert à rien mais si on reclique il redevient OFF
         else{
         emotech_connection.classList.add("OFF")
     emotech_connection.classList.remove("ON")
     emotech_connection.textContent="OFF"
-    suite.removeAttribute("href","test_vision.html")
+        if (version ==0){
+            suite.removeAttribute("href","test_vision.html")
+        }
+        else{
+            suite.removeAttribute("href","baseline.html")
+        }
+
 }
 })
