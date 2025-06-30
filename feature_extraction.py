@@ -3,15 +3,13 @@ import numpy as np
 from scipy.signal import find_peaks, welch
 import os
 
-# Dictionnaire d'encodage
+# Dictionnaire d'encodage (valence, arousal)
 emotion_encoding = {
-    'baseline': 0,
-    'Dégout': 1,
-    'Joie': 2,
-    'Peur': 3,
-    'Tristesse': 4,
-    'Colère': 5,
-    'Surprise': 6
+    'baseline': [0, 0],
+    'Joie': [1, 1],
+    'Peur': [-1, 1],
+    'Tristesse': [-1, -1],
+    'Calme': [1, -1]
 }
 
 def rmssd(donnee):
@@ -63,7 +61,7 @@ def feature_extraction(df, timestamps, emotions):
     # Baseline (avant le premier timestamp)
     baseline_df = df[df['Time'] < timestamps[0]]
     features = pipeline(baseline_df)
-    features['emotion'] = emotion_encoding['baseline']  # encodage numérique
+    features['valence'], features['arousal'] = emotion_encoding['baseline']
     all_features.append(features)
 
     # Fenêtres émotionnelles
@@ -72,45 +70,53 @@ def feature_extraction(df, timestamps, emotions):
         end = start + 5000  # fenêtre de 5 secondes
         extrait = df[(df['Time'] >= start) & (df['Time'] <= end)]
         features = pipeline(extrait)
-        features['emotion'] = emotion_encoding[emotions[i]]  # encodage numérique
+        valence, arousal = emotion_encoding[emotions[i]]
+        features['valence'] = valence
+        features['arousal'] = arousal
         all_features.append(features)
 
     return pd.DataFrame(all_features)
 
 def variation_relative(df):
-    # Récupérer la baseline (assumée être la première ligne)
-    baseline = df[df['emotion'] == 0].iloc[0]
+    # Récupérer la baseline (assumée être la première ligne avec valence=0 et arousal=0)
+    baseline = df[(df['valence'] == 0) & (df['arousal'] == 0)].iloc[0]
 
     variations = []
 
     for i in range(len(df)):
         row = df.iloc[i]
 
-        # On ne calcule pas la variation pour la baseline elle-même
-        if row['emotion'] == 0:
+        # Ne pas calculer la variation pour la baseline
+        if (row['valence'] == 0) and (row['arousal'] == 0):
             continue
 
-        variation = (row.drop('emotion') - baseline.drop('emotion')) / (baseline.drop('emotion') + 1e-6)  # epsilon pour éviter division par 0
-        variation['emotion'] = row['emotion']
+        # On retire les colonnes valence et arousal du calcul
+        signal_features = row.drop(['valence', 'arousal'])
+        baseline_features = baseline.drop(['valence', 'arousal'])
+
+        variation = (signal_features - baseline_features) / (baseline_features + 1e-6)  # éviter division par 0
+        variation['valence'] = row['valence']
+        variation['arousal'] = row['arousal']
         variations.append(variation)
 
     return pd.DataFrame(variations)
 
-        
-
 
 if __name__ == '__main__':
-    # Exemple d'initialisation
+    # Chargement des données
     data = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/cleaned_data.csv")
     plateforme = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/data_platform.csv")
+
+    # Traitement des timestamps et émotions
     timestamps = pd.to_numeric(plateforme['timestamp'], errors='coerce').dropna()
     emotions = plateforme['emotionsResentis'].dropna()
     emotions = emotions[emotions.str.lower() != 'undefined']
 
-    # Exemple d'utilisation
+    # Extraction des features
     features_df = feature_extraction(data, timestamps, emotions)
     variations_df = variation_relative(features_df)
-    # Export
+
+    # Sauvegarde
     features_df.to_csv('features_extracted.csv', index=False)
     variations_df.to_csv('relative_features.csv', index=False)
 
