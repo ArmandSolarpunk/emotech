@@ -3,7 +3,7 @@ import pandas as pd
 import glob
 
 # Cherche tous les CSV dans le dossier racine et tous les sous-dossiers
-csv_files = glob.glob('chemin/vers/racine/**/relative_features.csv', recursive=True)
+csv_files = glob.glob('C:/Users/arman/Desktop/Premierprojet/backend/base_de_donnee/**/relative_features.csv', recursive=True)
 
 if not csv_files:
     print("Aucun fichier 'relative_features.csv' trouvé.")
@@ -14,7 +14,7 @@ csv_list = []
 for file in csv_files:
     try:
         print(f'Lecture du fichier : {file}')
-        df = pd.read_csv(file, error_bad_lines=False)  # Ignore les lignes cassées
+        df = pd.read_csv(file, on_bad_lines='skip')  # Ignore les lignes cassées
         csv_list.append(df)
     except Exception as e:
         print(f"Erreur lors de la lecture du fichier {file} : {e}")
