@@ -27,6 +27,7 @@ clf = joblib.load('model_logistic_regression')
 y = clf.predict(ML_sample)
 y = tuple(y[0]) 
 y = emotion_encoding[y]
+print(y)
 
 """
 EDA : epidermal activity traité 

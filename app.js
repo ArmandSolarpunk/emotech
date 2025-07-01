@@ -78,8 +78,11 @@ const saveLocalData = (userId) => {
 // Lancer un script Python (collecte de données LSL)
 app.get('/start-recording', (req, res) => {
   if (pythonProcess) return res.status(400).send('Script Python déjà en cours.');
-  pythonProcess = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/lsl_reader.py']);
+  const scriptPath = path.join(__dirname, 'lsl_reader.py');
+  pythonProcess = spawn('python', [scriptPath]);
+
   pythonProcess.stdout.on('data', data => console.log(`Python output: ${data}`));
+
   pythonProcess.stderr.on('data', data => console.error(`Python error: ${data}`));
   pythonProcess.on('close', code => {
     console.log(`Script Python terminé avec code ${code}`);
@@ -90,7 +93,8 @@ app.get('/start-recording', (req, res) => {
 
 // Script Python pour la ligne de base
 app.get('/baseline', (req, res) => {
-  pythonProcess = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/lsl_reader_baseline.py']);
+  const scriptPath = path.join(__dirname, 'lsl_reader_baseline.py');
+  pythonProcess = spawn('python', [scriptPath]);
   pythonProcess.stdout.on('data', data => console.log(`Python output: ${data}`));
   pythonProcess.stderr.on('data', data => console.error(`Python error: ${data}`));
   pythonProcess.on('close', code => {
@@ -102,7 +106,9 @@ app.get('/baseline', (req, res) => {
 
 // Script pour la détection en temps réel
 app.get('/startDetection', (req, res) => {
-  pythonProcess = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/lsl_reader_detection.py']);
+  const scriptPath = path.join(__dirname, 'lsl_reader_detection.py');
+  pythonProcess = spawn('python', [scriptPath]);
+
   pythonProcess.stdout.on('data', data => console.log(`Python output: ${data}`));
   pythonProcess.stderr.on('data', data => console.error(`Python error: ${data}`));
   pythonProcess.on('close', code => {
@@ -152,6 +158,9 @@ app.get('/stop-recording', (req, res) => {
   });
 });
 
+
+
+
 // Enregistrement manuel d’une émotion
 app.post('/api/emotion', (req, res) => {
   const emotech = new Emotech({ ...req.body });
@@ -165,6 +174,49 @@ app.get('/api/emotion', (req, res) => {
   Emotech.find()
     .then(emotechs => res.status(200).json(emotechs))
     .catch(error => res.status(400).json({ error }));
+});
+
+// arrêt et récupération de la baseline comme référence  
+app.get('/stopBaseline', (req, res) => {
+  if (!pythonProcess) return res.status(400).send('Aucun script en cours.');
+  pythonProcess.kill();
+  pythonProcess = null;
+
+  const pythonProcess2 = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/data_process_baseline.py']);
+  pythonProcess2.stdout.on('data', data => console.log(`Python output: ${data}`));
+  pythonProcess2.stderr.on('data', data => console.error(`Python error: ${data}`));
+
+  pythonProcess2.on('close', async code => {
+    if (code !== 0) return res.status(500).json({ error: 'Erreur traitement Python.' });
+  });
+res.status(200).json({ message: 'Traitement de la baseline terminé' });
+
+});
+
+app.get('/stopDetection', (req, res) => {
+  if (!pythonProcess) return res.status(400).send('Aucun script en cours.');
+  pythonProcess.kill();
+  pythonProcess = null;
+
+  const pythonProcess2 = spawn('python', ['C:/Users/arman/Desktop/Premierprojet/backend/data_process_detection.py']);
+
+  let emotionDetected = "";
+
+  pythonProcess2.stdout.on('data', data => {
+    console.log(`Python output: ${data}`);
+    emotionDetected += data.toString(); // on accumule les sorties
+  });
+
+  pythonProcess2.stderr.on('data', data => console.error(`Python error: ${data}`));
+
+  pythonProcess2.on('close', async code => {
+    if (code !== 0) return res.status(500).json({ error: 'Erreur traitement Python.' });
+
+    // Nettoyage : optionnel selon ce que retourne Python
+    emotionDetected = emotionDetected.trim();
+
+    res.status(200).json({ emotion: emotionDetected });
+  });
 });
 
 module.exports = app;
