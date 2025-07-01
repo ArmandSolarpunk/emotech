@@ -1,23 +1,14 @@
-from fonctions import run_pipeline,extract_features, compute_variation_relative
+from fonctions import run_pipeline,extract_features
 import pandas as pd
 import numpy as np
 
 run_pipeline(
-    input_path='raw.csv',
-    output_path='cleaned_data.csv',
+    input_path='raw_baseline.csv',
+    output_path='cleaned_data_baseline.csv',
 )
-
-df = pd.read_csv("cleaned_data.csv")
-platform = pd.read_csv("data_platform.csv")
-timestamps = pd.to_numeric(platform['timestamp'], errors='coerce').dropna()
-emotions = platform['emotionsResentis'].dropna()
-
-features_df = extract_features(df, mode='collecte_dataset', timestamps=timestamps, emotions=emotions)
-variations_df = compute_variation_relative(features_df)
-
-features_df.to_csv('features_extracted.csv', index=False)
-variations_df.to_csv('relative_features.csv', index=False)
-
+df = pd.read_csv('cleaned_data_baseline.csv')
+baseline_features = extract_features(df, mode='baseline_pure')
+baseline_features.to_csv('features_baseline.csv', index=False)
 
 """
 EDA : epidermal activity traité 

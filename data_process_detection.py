@@ -1,23 +1,32 @@
-from fonctions import run_pipeline,extract_features, compute_variation_relative
+from fonctions import run_pipeline,extract_features
 import pandas as pd
 import numpy as np
+import joblib
+
+emotion_encoding = {
+    (1, 1): 'Joie',
+    (-1, 1): 'Peur',
+    (-1, -1): 'Tristesse',
+    (1, -1): 'Calme'
+}
 
 run_pipeline(
-    input_path='raw.csv',
-    output_path='cleaned_data.csv',
+    input_path='raw_detection.csv',
+    output_path='cleaned_data_detection.csv',
 )
 
-df = pd.read_csv("cleaned_data.csv")
-platform = pd.read_csv("data_platform.csv")
-timestamps = pd.to_numeric(platform['timestamp'], errors='coerce').dropna()
-emotions = platform['emotionsResentis'].dropna()
+df = pd.read_csv('cleaned_data_detection.csv')
+sample_features = extract_features(df, mode='sample_test')
 
-features_df = extract_features(df, mode='collecte_dataset', timestamps=timestamps, emotions=emotions)
-variations_df = compute_variation_relative(features_df)
+baseline = pd.read_csv('features_baseline.csv')
 
-features_df.to_csv('features_extracted.csv', index=False)
-variations_df.to_csv('relative_features.csv', index=False)
+ML_sample = sample_features - baseline
 
+clf = joblib.load('model_logistic_regression')
+
+y = clf.predict(ML_sample)
+y = tuple(y[0]) 
+y = emotion_encoding[y]
 
 """
 EDA : epidermal activity traité 
