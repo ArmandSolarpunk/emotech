@@ -7,9 +7,8 @@
  */
 
 let score = getTableau("score")
-emotion = stopDetection()
- let reponse = document.getElementById("reponse")
- reponse.textContent = emotion 
+ stopDetection()
+
 let vrai = document.getElementById("Vrai")
 let faux = document.getElementById("Faux")
 

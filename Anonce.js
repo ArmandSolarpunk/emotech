@@ -43,8 +43,11 @@ else{
     let emotionsResentis=getTableau("emotionsResentis")
     console.log(emotionsResentis)
 
-    let commentaires=getTableau("commentaires")
-    console.log(commentaires)
+    let arousal=getTableau("arousal")
+    console.log(arousal)
+
+    let valence=getTableau("valence")
+    console.log(valence)
 //création d'un objet participant avec tous les tableaux 
 
     let participant = {
@@ -52,7 +55,8 @@ else{
     situationoeil,
     timestamp,
     emotionsResentis,
-    commentaires
+    arousal,
+    valence
 
 // on envoie l'objet au serveur Nodemon pour qu'il soit traité     
 }

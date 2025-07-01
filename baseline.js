@@ -31,8 +31,11 @@ setTableau(timestamp,"timestamp")
 let emotionsResentis = []
 setTableau(emotionsResentis,"emotionsResentis")
 
-let commentaires = []
-setTableau(commentaires,"commentaires")
+let arousal = []
+setTableau(arousal,"arousal")
+
+let valence = []
+setTableau(valence,"valence")
 }
 
 

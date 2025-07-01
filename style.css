@@ -107,7 +107,6 @@ div,nav{
 }
 
 .bloc{ 
-    background-image: url("https://images.squarespace-cdn.com/content/v1/60d2550de332b22f60eec9f4/351f0649-7243-4384-a878-d329ff8b752a/Plasant+%282%29.png");
 display: grid;
 grid-template-columns: 250px 250px;
 grid-template-rows: 250px 250px;

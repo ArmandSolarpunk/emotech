@@ -13,7 +13,8 @@
  * situationoeil=[]  
  * timestamp = []
  * emotionsResentis = []
- * commentaires=[]
+ * arousal= []
+ * valence = []
  * 
  * version
  * score = []
@@ -125,11 +126,18 @@ function startDetection(){
       .catch(error => console.error('Erreur :', error));
     }
 
-function stopDetection(){
-      fetch('http://localhost:3000/stopDetection')
-      .then(response => response.text())
-      .then(data => {
-          console.log('Réponse serveur :', data);
-      })
-      .catch(error => console.error('Erreur :', error));
+async function getEmotion() {
+    try {
+        const response = await fetch('http://localhost:3000/stopDetection');
+        const data = await response.json();
+        return data.emotion;  // contient l’émotion détectée
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'émotion :", error);
+        return "Erreur";
     }
+}
+
+getEmotion().then(emotion => {
+    let reponse = document.getElementById("reponse");
+    reponse.textContent = emotion;
+});
