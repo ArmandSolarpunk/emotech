@@ -7,16 +7,22 @@
  */
 
 let score = getTableau("score")
- stopDetection()
+let reponse = document.getElementById("reponse")
+
+let emotion = getEmotion()
+reponse.textContent = emotion
 
 let vrai = document.getElementById("Vrai")
 let faux = document.getElementById("Faux")
 
 vrai.addEventListener("click",()=>{
     score.push(true)
+    let emotionsResentis = getTableau("emotionsResentis");
+    emotionsResentis.push(emotion);
+    setTableau(emotionsResentis, "emotionsResentis");
     window.location.href = "Anonce.html";
 })
 faux.addEventListener("click",()=>{
     score.push(false)
-    window.location.href = "Anonce.html";
+    window.location.href = "EmotionsBis.html";
 })

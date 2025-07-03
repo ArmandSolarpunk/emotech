@@ -29,7 +29,11 @@ else{
     illustration.textContent="The End"
 
     revelation.textContent = 'Accueil'
-    revelation.href= 'plateform.html'
+    revelation.href= 'plateform.html'    
+
+  
+    let emotionsResentis=getTableau("emotionsResentis")
+    console.log(emotionsResentis)
 
     
     if (version == 0){
@@ -39,9 +43,6 @@ else{
     
     let timestamp=getTableau("timestamp")
     console.log(timestamp)
-
-    let emotionsResentis=getTableau("emotionsResentis")
-    console.log(emotionsResentis)
 
     let arousal=getTableau("arousal")
     console.log(arousal)
@@ -73,5 +74,14 @@ fetch("http://localhost:3000/save-csv", {
 
 // arret de l'enregistrement voir app.js
   stopRecording()
+}
+// ajouter l'enregistrement des émotions avec le csv des enregistrements de Emotibit
+else{
+    let score=getTableau("score")
+    console.log(score)
+    const reponses = score.filter(Boolean).length;
+    let resultat = "score = " + reponses + score.length 
+  document.body.insertAdjacentHTML('beforeend',resultat)
+
 }
 }

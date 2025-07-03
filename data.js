@@ -22,9 +22,29 @@
  */
 
 // listes des tableaux pour l'expérience
-let liste2peintures=["https://morganmarine.com/wp-content/uploads/2019/10/Screenshot-2019-10-01-at-10.48.39.jpg"]
+let listepeintures=['https://uploads6.wikiart.org/images/richard-wilson/italian-landscape-morning-1765.jpg',
+'https://uploads4.wikiart.org/images/oscar-dominguez/m-quina-de-coser-electro-sexual-1934.jpg',
+'https://uploads1.wikiart.org/images/jean-honore-fragonard/young-girl-reading.jpg',
+'https://uploads3.wikiart.org/00144/images/jean-francois-millet/jean-fran-ois-millet-gleaners-google-art-project.jpg',
+'https://uploads6.wikiart.org/images/william-hamilton/john-philip-kemble-1757-1823-as-richard-in-richard-iii-by-william-shakespeare-1788.jpg',
+'https://uploads5.wikiart.org/images/eugeniusz-ak/shepherd-1910.jpg',
+'https://uploads2.wikiart.org/images/eyvind-earle/green-hillside-1970.jpg',
+'https://uploads7.wikiart.org/00103/images/maarten-de-vos/portrait-of-antonius-anselmus-his-wife-and-their-children-1577.jpg',
+'https://uploads5.wikiart.org/images/jules-pascin/in-the-hotel-room-1908.jpg',
+'https://uploads8.wikiart.org/00157/images/oleg-holosiy/1991-8.jpg',
+'https://uploads5.wikiart.org/images/jacob-jordaens/as-the-old-sang-so-the-young-pipe-1640.jpg',
+'https://uploads1.wikiart.org/images/arnulf-rainer/untitled-death-mask-1978-1.jpg',
+'https://uploads6.wikiart.org/images/marie-bracquemond/woman-with-an-umbrella-1880.jpg',
+'https://uploads7.wikiart.org/images/william-turner/the-shipwreck.jpg',
+'https://uploads1.wikiart.org/images/giuseppe-santomaso/incanto-1958.jpg',
+'https://uploads6.wikiart.org/images/henry-herbert-la-thangue/portrait-of-a-young-girl-1880.jpg',
+'https://uploads3.wikiart.org/images/john-william-godward/dolce-far-niente-1904.jpg',
+'https://uploads5.wikiart.org/images/jean-michel-basquiat/boxer.jpg',
+'https://uploads6.wikiart.org/images/william-orpen/the-spanish-woman-1905.jpg',
+'https://uploads5.wikiart.org/images/pierre-auguste-renoir/jeanne-samary-in-a-low-necked-dress-1877.jpg'
+]
 
-let listepeintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-spanking-the-christ-child-before-three-witnesses-andre-breton-paul-eluard-and-the-1926.jpg",
+let liste2peintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-spanking-the-christ-child-before-three-witnesses-andre-breton-paul-eluard-and-the-1926.jpg",
    "https://uploads0.wikiart.org/00130/images/david-morier/the-battle-of-culloden-1746.jpg",
     "https://uploads3.wikiart.org/images/francisco-goya/execution-of-the-defenders-of-madrid-3rd-may-1808-1814.jpg", 
     "https://uploads0.wikiart.org/images/vasily-perov/last-journey-1865.jpg", 

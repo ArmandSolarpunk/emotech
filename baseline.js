@@ -10,10 +10,7 @@
 let petitbambou = document.getElementById("petitBambou")
 let body=document.querySelector("body")
 
-// petit racourcis pour skip en cliquant sur la page  
-body.addEventListener("click",()=>{
-  window.location.href = "Anonce.html"
-})
+
 
 
 if(version==0){
@@ -28,8 +25,7 @@ console.log(temps)
 let timestamp = []
 setTableau(timestamp,"timestamp")
 
-let emotionsResentis = []
-setTableau(emotionsResentis,"emotionsResentis")
+
 
 let arousal = []
 setTableau(arousal,"arousal")
@@ -45,10 +41,19 @@ else{
   setTableau(score,"score")
 }
 
+
 //ammorce de l'indice d'avancement 
 let index=0
 sessionStorage.setItem("indexBoucle", index);
 // Messages petit bambou qui popent régulièrement 
+
+let emotionsResentis = []
+setTableau(emotionsResentis,"emotionsResentis")
+// petit racourcis pour skip en cliquant sur la page  
+body.addEventListener("click",()=>{
+  window.location.href = "Anonce.html"
+})
+
 setTimeout(() => {
   petitbambou.textContent = "Posez-vous un instant et Respirez";
 }, 5000);
