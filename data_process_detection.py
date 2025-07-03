@@ -2,6 +2,7 @@ from fonctions import run_pipeline,extract_features
 import pandas as pd
 import numpy as np
 import joblib
+import os
 
 emotion_encoding = {
     (1, 1): 'Joie',
@@ -21,6 +22,21 @@ sample_features = extract_features(df, mode='sample_test')
 baseline = pd.read_csv('features_baseline.csv')
 
 ML_sample = sample_features - baseline
+
+output_csv = 'features_detection.csv'
+
+# Vérifie si le fichier existe
+if os.path.exists(output_csv):
+    # Charge le fichier existant
+    existing_df = pd.read_csv(output_csv)
+    # Concatène la nouvelle ligne (attention : on suppose que ML_sample est une seule ligne ici)
+    updated_df = pd.concat([existing_df, ML_sample], ignore_index=True)
+else:
+    # Le fichier n'existe pas, donc on crée un nouveau DataFrame
+    updated_df = ML_sample
+
+# Sauvegarde le fichier
+updated_df.to_csv(output_csv, index=False)
 
 clf = joblib.load('model_logistic_regression')
 

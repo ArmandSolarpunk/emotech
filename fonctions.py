@@ -19,6 +19,7 @@ def init_csv_file(csv_file):
     """
     Initialise un fichier CSV avec les colonnes ['Type', 'Time', 'Data']
     """
+    print(f"[INIT] Création du fichier {csv_file}", flush=True)
     with open(csv_file, mode='w', newline='') as file:
         writer = csv.writer(file)
         writer.writerow(['Type', 'Time', 'Data'])
@@ -29,16 +30,19 @@ def listen_to_stream(info, csv_file):
     Écoute un flux LSL donné et écrit les données dans un fichier CSV.
     """
     inlet = StreamInlet(info)
-    print(f"Connecté au flux {info.name()} ({info.type()}).")
+    print(f"[LSL] Connecté au flux {info.name()} ({info.type()})", flush=True)
 
     with open(csv_file, mode='a', newline='') as file:
         writer = csv.writer(file)
 
         while True:
-            sample, timestamp = inlet.pull_sample()
-            writer.writerow([info.name(), timestamp, sample[0]])
-            file.flush()
-            print(f"{info.name()}, {timestamp}, {sample[0]}")
+            sample, timestamp = inlet.pull_sample(timeout=1.0)  # timeout pour détecter si le flux est inactif
+            if sample:
+                writer.writerow([info.name(), timestamp, sample[0]])
+                file.flush()
+                print(f"[DATA] {info.name()} | {timestamp} | {sample[0]}", flush=True)
+            else:
+                print(f"[ATTENTE] Aucune donnée reçue depuis 1 seconde pour {info.name()}", flush=True)
 
 
 def start_recording(csv_file='raw.csv', target_names=None):
@@ -49,17 +53,19 @@ def start_recording(csv_file='raw.csv', target_names=None):
     if target_names is None:
         target_names = ['PPG_RED', 'PPG_IR', 'PPG_GRN', 'EDA', 'TEMP1']
 
-    print(f"Initialisation du fichier {csv_file}...")
+    print(f"[START] Initialisation de l'enregistrement dans {csv_file}", flush=True)
     init_csv_file(csv_file)
 
-    print("Recherche de flux LSL...")
+    print("[START] Recherche des flux LSL disponibles...", flush=True)
     streams = resolve_streams()
-    found = False
+    print(f"[INFO] {len(streams)} flux détectés au total.", flush=True)
 
+    found = False
     for info in streams:
-        print(f"Flux détecté : {info.name()} ({info.type()})")
+        print(f"[FLUX] Détecté : {info.name()} ({info.type()})", flush=True)
         if info.name() in target_names:
             found = True
+            print(f"[MATCH] Flux {info.name()} correspond aux cibles. Démarrage de l'écoute...", flush=True)
             threading.Thread(
                 target=listen_to_stream,
                 args=(info, csv_file),
@@ -67,11 +73,16 @@ def start_recording(csv_file='raw.csv', target_names=None):
             ).start()
 
     if not found:
-        print("Aucun flux attendu trouvé.")
+        print("[ERREUR] Aucun flux attendu n'a été trouvé. Vérifie la config LSL de l'EmotiBit.", flush=True)
 
+    # Boucle infinie pour maintenir le script actif
     while True:
-        pass  # Boucle infinie pour maintenir le script actif
+        pass
 
+
+if __name__ == "__main__":
+    # Tu peux changer ici le nom du fichier si besoin
+    start_recording(csv_file='raw.csv')
 # ============================
 #  fonction data process 
 # ============================

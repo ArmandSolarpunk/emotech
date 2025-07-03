@@ -7,6 +7,9 @@
  *
  * Navigation: Ce fichier est le cœur du serveur backend. Il est démarré depuis `server.js` et orchestre
  * les appels aux scripts Python, la sauvegarde de fichiers, et les routes API REST.
+ * 
+ * 
+ * A TRANSFORMER EN SERVEUR FLASK PLUS LEGER ET MEILLEUR COMPATIBILITE
  */
 
 const express = require('express');
@@ -40,11 +43,11 @@ app.use((req, res, next) => {
 // Route pour sauvegarder les réponses du frontend en CSV
 app.post('/save-csv', (req, res) => {
   try {
-    const { situationoeil, timestamp, emotionsResentis, commentaires } = req.body;
-    let csvContent = 'situationoeil,timestamp,emotionsResentis,commentaires\n';
+    const { situationoeil, timestamp, emotionsResentis, arousal, valence } = req.body;
+    let csvContent = 'situationoeil,timestamp,emotionsResentis,arousal,valence \n';
 
     for (let i = 0; i < timestamp.length; i++) {
-      csvContent += `"${situationoeil[i]}",${timestamp[i]},"${emotionsResentis[i]}","${commentaires[i]}"\n`;
+      csvContent += `"${situationoeil[i]}",${timestamp[i]},"${emotionsResentis[i]}","${arousal[i]}","${valence[i]}"\n`;
     }
 
     const filePath = path.join(__dirname, 'data_platform.csv');
