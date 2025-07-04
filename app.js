@@ -121,6 +121,20 @@ app.get('/startDetection', (req, res) => {
   res.send('Détection démarrée.');
 });
 
+// Script pour la détection en temps réel
+app.get('/fin_detection', (req, res) => {
+  const scriptPath = path.join(__dirname, 'newDB.py');
+  pythonProcess = spawn('python', [scriptPath]);
+
+  pythonProcess.stdout.on('data', data => console.log(`Python output: ${data}`));
+  pythonProcess.stderr.on('data', data => console.error(`Python error: ${data}`));
+  pythonProcess.on('close', code => {
+    console.log(`Script Python terminé avec code ${code}`);
+    pythonProcess = null;
+  });
+  res.send('Détection démarrée.');
+});
+
 // Arrêter le script et lancer le traitement
 app.get('/stop-recording', (req, res) => {
   if (!pythonProcess) return res.status(400).send('Aucun script en cours.');
