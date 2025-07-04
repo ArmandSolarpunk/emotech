@@ -161,3 +161,12 @@ getEmotion().then(emotion => {
     let reponse = document.getElementById("reponse");
     reponse.textContent = emotion;
 });
+
+function finDetection(){
+      fetch('http://localhost:3000/fin_detection')
+      .then(response => response.text())
+      .then(data => {
+          console.log('Réponse serveur :', data);
+      })
+      .catch(error => console.error('Erreur :', error));
+    }

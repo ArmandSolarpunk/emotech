@@ -16,7 +16,12 @@ let body=document.querySelector("body")
 if(version==0){
   // communication avec le serveur pour le lancer 
   startRecording()
-  
+  }
+  else{
+  baseline()
+  let score = []
+  setTableau(score,"score")
+}
   //recupératione du temps 0
 const temps=startTimer()
 console.log(temps)
@@ -25,22 +30,11 @@ console.log(temps)
 let timestamp = []
 setTableau(timestamp,"timestamp")
 
-
-
 let arousal = []
 setTableau(arousal,"arousal")
 
 let valence = []
 setTableau(valence,"valence")
-}
-
-
-else{
-  baseline()
-  let score = []
-  setTableau(score,"score")
-}
-
 
 //ammorce de l'indice d'avancement 
 let index=0

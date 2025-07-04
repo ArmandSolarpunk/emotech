@@ -36,7 +36,7 @@ else{
     console.log(emotionsResentis)
 
     
-    if (version == 0){
+    
     // Récuperation de toutres les informations données précédements
     let situationoeil=getTableau("situationoeil")
     console.log(situationoeil)
@@ -72,16 +72,20 @@ fetch("http://localhost:3000/save-csv", {
 .then(data => { console.log("CSV enregistré :", data); })
 .catch(error => { console.error("Erreur :", error); });
 
+
+if (version == 0){
 // arret de l'enregistrement voir app.js
   stopRecording()
 }
+
 // ajouter l'enregistrement des émotions avec le csv des enregistrements de Emotibit
 else{
     let score=getTableau("score")
     console.log(score)
     const reponses = score.filter(Boolean).length;
     let resultat = "score = " + reponses + score.length 
-  document.body.insertAdjacentHTML('beforeend',resultat)
-
+    document.body.insertAdjacentHTML('beforeend',resultat)
+    finDetection()
 }
+
 }
