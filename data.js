@@ -67,7 +67,7 @@ let liste2peintures=["https://uploads5.wikiart.org/images/max-ernst/the-virgin-s
 
 
 
-const version = parseFloat(localStorage.getItem("version"));
+
 
 
 

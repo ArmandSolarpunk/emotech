@@ -7,6 +7,8 @@
  * Navigation : redirection vers la baseline une fois le quetionnair envoyé et appui du bouton 
  */
 
+const version = parseFloat(localStorage.getItem("version"));
+
 //selection des éléments html
 if (version == 0){
   liste_peintures = listepeintures

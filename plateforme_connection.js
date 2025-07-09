@@ -5,7 +5,7 @@
  *  
  * navigation: envoie vers la page de test_vision après self verification 
 */
-
+const version = parseFloat(localStorage.getItem("version"));
 // sélection des élements html
 let emotech_connection = document.getElementById("Emotech-connection")
 let suite = document.getElementById("suite") 

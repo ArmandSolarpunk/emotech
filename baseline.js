@@ -9,8 +9,7 @@
 //selection des éléments de la page 
 let petitbambou = document.getElementById("petitBambou")
 let body=document.querySelector("body")
-
-
+const version = parseFloat(localStorage.getItem("version"));
 
 
 if(version==0){

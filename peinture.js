@@ -8,6 +8,8 @@
  * 
  * Navigation : redirection automatique vers emotions.html après chaque image
  */
+
+const version = parseFloat(localStorage.getItem("version"));
 let index = parseInt(sessionStorage.getItem("indexBoucle"))
 // changement de l'image affiché 
 let illustation=document.querySelector("img")
