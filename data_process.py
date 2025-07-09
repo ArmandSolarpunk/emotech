@@ -1,22 +1,24 @@
+#dataprocess
+
 from fonctions import run_pipeline,extract_features, compute_variation_relative
 import pandas as pd
 import numpy as np
 
 run_pipeline(
-    input_path='raw.csv',
-    output_path='cleaned_data.csv',
+    input_path='C:/Users/arman/Desktop/Premierprojet/backend/raw.csv',
+    output_path='C:/Users/arman/Desktop/Premierprojet/backend/cleaned_data.csv',
 )
 
-df = pd.read_csv("cleaned_data.csv")
-platform = pd.read_csv("data_platform.csv")
+df = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/cleaned_data.csv")
+platform = pd.read_csv("C:/Users/arman/Desktop/Premierprojet/backend/data_platform.csv")
 timestamps = pd.to_numeric(platform['timestamp'], errors='coerce').dropna()
 emotions = platform['emotionsResentis'].dropna()
 
 features_df = extract_features(df, mode='collecte_dataset', timestamps=timestamps, emotions=emotions)
 variations_df = compute_variation_relative(features_df)
 
-features_df.to_csv('features_extracted.csv', index=False)
-variations_df.to_csv('relative_features.csv', index=False)
+features_df.to_csv('C:/Users/arman/Desktop/Premierprojet/backend/features_extracted.csv', index=False)
+variations_df.to_csv('C:/Users/arman/Desktop/Premierprojet/backend/relative_features.csv', index=False)
 
 
 """

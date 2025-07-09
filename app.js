@@ -1,24 +1,11 @@
-/**
- * Fichier: app.js
- *
- * Description: Backend Node.js pour gérer l'enregistrement de données LSL, leur traitement via Python,
- * la sauvegarde en base de données MongoDB, et la communication avec le frontend.
- * Il permet également de lancer des scripts pour la ligne de base ou la détection en temps réel.
- *
- * Navigation: Ce fichier est le cœur du serveur backend. Il est démarré depuis `server.js` et orchestre
- * les appels aux scripts Python, la sauvegarde de fichiers, et les routes API REST.
- * 
- * 
- * A TRANSFORMER EN SERVEUR FLASK PLUS LEGER ET MEILLEUR COMPATIBILITE
- */
-
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose'); // <-- Commenté car MongoDB non utilisé offline
 const { spawn } = require('child_process');
-const Emotech = require('./models/Emotech');
+// const Emotech = require('./models/Emotech'); // <-- Commenté car dépend de MongoDB
 
+/*
 // Connexion MongoDB
 mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5.mongodb.net/', {
   useNewUrlParser: true,
@@ -26,6 +13,7 @@ mongoose.connect('mongodb+srv://stagehumantech:kVX3bJ2mBOZ9YFxq@cluster0.d9icoz5
 })
 .then(() => console.log('Connexion à MongoDB réussie !'))
 .catch(() => console.log('Connexion à MongoDB échouée !'));
+*/
 
 const app = express();
 let pythonProcess = null;
@@ -85,7 +73,6 @@ app.get('/start-recording', (req, res) => {
   pythonProcess = spawn('python', [scriptPath]);
 
   pythonProcess.stdout.on('data', data => console.log(`Python output: ${data}`));
-
   pythonProcess.stderr.on('data', data => console.error(`Python error: ${data}`));
   pythonProcess.on('close', code => {
     console.log(`Script Python terminé avec code ${code}`);
@@ -121,7 +108,6 @@ app.get('/startDetection', (req, res) => {
   res.send('Détection démarrée.');
 });
 
-// Script pour la détection en temps réel
 app.get('/fin_detection', (req, res) => {
   const scriptPath = path.join(__dirname, 'newDB.py');
   pythonProcess = spawn('python', [scriptPath]);
@@ -155,6 +141,8 @@ app.get('/stop-recording', (req, res) => {
       const featureData = fs.readFileSync(path.join(__dirname, 'features_extracted.csv'), 'utf-8');
       const varFeatureData = fs.readFileSync(path.join(__dirname, 'relative_features.csv'), 'utf-8');
 
+      /*
+      // Enregistrement dans MongoDB désactivé pour usage hors-ligne
       const emotech = new Emotech({
         id: Date.now(),
         plateform: platformData,
@@ -165,20 +153,21 @@ app.get('/stop-recording', (req, res) => {
       });
 
       await emotech.save();
-      const localPath = saveLocalData(emotech.id);
+      */
+
+      // Sauvegarde locale uniquement
+      const localPath = saveLocalData(Date.now());
       console.log(`Sauvegardé localement dans ${localPath}`);
-      res.send('Traitement terminé et données enregistrées dans MongoDB.');
+      res.send('Traitement terminé et données sauvegardées localement.');
     } catch (err) {
-      console.error('Erreur sauvegarde MongoDB :', err);
-      res.status(500).json({ error: 'Erreur de sauvegarde en base. Vérifiez les fichiers CSV.' });
+      console.error('Erreur lecture/sauvegarde des fichiers CSV :', err);
+      res.status(500).json({ error: 'Erreur locale. Vérifiez les fichiers CSV.' });
     }
   });
 });
 
-
-
-
-// Enregistrement manuel d’une émotion
+/*
+// Enregistrement manuel d’une émotion — désactivé hors-ligne
 app.post('/api/emotion', (req, res) => {
   const emotech = new Emotech({ ...req.body });
   emotech.save()
@@ -186,14 +175,14 @@ app.post('/api/emotion', (req, res) => {
     .catch(error => res.status(400).json({ error }));
 });
 
-// Récupération des enregistrements en base
+// Récupération des enregistrements en base — désactivé hors-ligne
 app.get('/api/emotion', (req, res) => {
   Emotech.find()
     .then(emotechs => res.status(200).json(emotechs))
     .catch(error => res.status(400).json({ error }));
 });
+*/
 
-// arrêt et récupération de la baseline comme référence  
 app.get('/stopBaseline', (req, res) => {
   if (!pythonProcess) return res.status(400).send('Aucun script en cours.');
   pythonProcess.kill();
@@ -206,8 +195,8 @@ app.get('/stopBaseline', (req, res) => {
   pythonProcess2.on('close', async code => {
     if (code !== 0) return res.status(500).json({ error: 'Erreur traitement Python.' });
   });
-res.status(200).json({ message: 'Traitement de la baseline terminé' });
 
+  res.status(200).json({ message: 'Traitement de la baseline terminé' });
 });
 
 app.get('/stopDetection', (req, res) => {
@@ -221,7 +210,7 @@ app.get('/stopDetection', (req, res) => {
 
   pythonProcess2.stdout.on('data', data => {
     console.log(`Python output: ${data}`);
-    emotionDetected += data.toString(); // on accumule les sorties
+    emotionDetected += data.toString();
   });
 
   pythonProcess2.stderr.on('data', data => console.error(`Python error: ${data}`));
@@ -229,9 +218,7 @@ app.get('/stopDetection', (req, res) => {
   pythonProcess2.on('close', async code => {
     if (code !== 0) return res.status(500).json({ error: 'Erreur traitement Python.' });
 
-    // Nettoyage : optionnel selon ce que retourne Python
     emotionDetected = emotionDetected.trim();
-
     res.status(200).json({ emotion: emotionDetected });
   });
 });
