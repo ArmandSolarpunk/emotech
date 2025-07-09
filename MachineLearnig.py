@@ -10,39 +10,50 @@ import seaborn as sns
 
 
 
-data =  pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/machineLearning.csv')
+data =  pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/3ML.csv')
 
-X = data[['PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_IR_std','PPG_RED_mean','PPG_RED_std','TEMP1_mean','TEMP1_std','PPG_IR_HR_brut_mean','PPG_IR_HR_brut_std','PPG_IR_HR_brut_rmssd','PPG_GRN_HR_brut_mean','PPG_GRN_HR_brut_std','PPG_GRN_HR_brut_rmssd','PPG_RED_HR_brut_mean','PPG_RED_HR_brut_std','PPG_RED_HR_brut_rmssd','PPG_IR_IBI_brut_mean','PPG_IR_IBI_brut_std','PPG_IR_IBI_brut_rmssd','PPG_GRN_IBI_brut_mean','PPG_GRN_IBI_brut_std','PPG_GRN_IBI_brut_rmssd','PPG_RED_IBI_brut_mean','PPG_RED_IBI_brut_std','PPG_RED_IBI_brut_rmssd']]
-y = data[['valence','arousal']]
+X = data[['EDA_mean','EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_IR_std','PPG_RED_mean','PPG_RED_std','TEMP1_mean','TEMP1_std','PPG_IR_HR_brut_mean','PPG_IR_HR_brut_std','PPG_IR_HR_brut_rmssd','PPG_GRN_HR_brut_mean','PPG_GRN_HR_brut_std','PPG_GRN_HR_brut_rmssd','PPG_RED_HR_brut_mean','PPG_RED_HR_brut_std','PPG_RED_HR_brut_rmssd','PPG_IR_IBI_brut_mean','PPG_IR_IBI_brut_std','PPG_IR_IBI_brut_rmssd','PPG_GRN_IBI_brut_mean','PPG_GRN_IBI_brut_std','PPG_GRN_IBI_brut_rmssd','PPG_RED_IBI_brut_mean','PPG_RED_IBI_brut_std','PPG_RED_IBI_brut_rmssd']]
+
+
+y = data['emotion_mapped']
 
 X_train, X_test, y_train, y_test = train_test_split( X, y, train_size=0.8, random_state=808, stratify=y)
 
-"""
-random forest
+"""#random forest
+#
+
 tree_counts = [1,2,3,4,5,10,15,20,25,30,40,50, 60, 70, 80, 90, 100, 110, 120]
-
-GOOD BETWEEN 20 AND 60 
-for n_estimator in tree_counts:
+tree_counts = [ 1,2,3,4,5,6,7,8,9,10]
 accuracy  = []
+for n_estimator in tree_counts:
 
-clf = RandomForestClassifier(
-     n_estimators = 60,
-    max_depth = 2,
-    random_state = 8
-    )
-
-clf.fit(X_train, y_train)
-accuracy.append(clf.score(X_test, y_test))
-
-print(accuracy)    
-
+ accuracy.append(clf.score(X_test, y_test))
+print(accuracy)
 sns.lineplot(x=tree_counts, y=accuracy)
 plt.xlabel('tree_counts')
 plt.ylabel('accuracy_score')
 plt.title('accuracy')
 plt.grid()
 plt.show()
+    
+#GOOD BETWEEN 20 AND 60 
+"""
 
+
+     
+clf = RandomForestClassifier(
+n_estimators = 10,
+max_depth = 2,
+random_state = 8,
+class_weight='balanced'
+)
+
+clf.fit(X_train, y_train)
+    
+
+
+
+"""
 
 avec 20
 [0.4722222222222222]
@@ -96,12 +107,16 @@ test 0.7323340904574547
     accuracy                           0.42        36
    macro avg       0.33      0.27      0.24        36
 weighted avg       0.39      0.42      0.34        36
-"""
+
+
+
+
 clf = LogisticRegression(random_state=808).fit(X, y)
 
 features = X.columns
 coefs = clf.coef_  # shape = (n_classes, n_features)
-
+"""
+"""
 # On met ça dans un DataFrame
 coef_df = pd.DataFrame(coefs.T, columns=[f"Class_{cls}" for cls in clf.classes_])
 coef_df['Feature'] = features
@@ -115,7 +130,6 @@ plt.show()
 
 
 
-"""
 importances = clf.feature_importances_
 features = X.columns
 
@@ -131,9 +145,9 @@ plt.tight_layout()
 plt.show()
 """
 
-"""
-train_auc = roc_auc_score(y_train, clf.predict_proba(X_train), multi_class='ovr')
-test_auc = roc_auc_score(y_test, clf.predict_proba(X_test), multi_class='ovr')
+
+train_auc = roc_auc_score(y_train, clf.predict_proba(X_train)[:, 1])
+test_auc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])
 print("train",train_auc)
 print("test", test_auc)
 
@@ -142,5 +156,18 @@ y_test_hat = clf.predict(X_test)
 print(confusion_matrix(y_test, y_test_hat))
 print(classification_report(y_test, y_test_hat))
 
-joblib.dump(clf,'model_logistic_regression')
-"""
+
+"""joblib.dump(clf,'model_logistic_regression')"""
+
+"""train 0.8714202786377708
+test 0.7910216718266253
+[[15  2]
+ [ 6 13]]
+              precision    recall  f1-score   support
+
+          -1       0.71      0.88      0.79        17
+           1       0.87      0.68      0.76        19
+
+    accuracy                           0.78        36
+   macro avg       0.79      0.78      0.78        36
+weighted avg       0.79      0.78      0.78        36"""
