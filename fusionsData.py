@@ -22,7 +22,7 @@ for file in csv_files:
 # Fusionner tous les fichiers en un seul CSV
 if csv_list:
     merged_df = pd.concat(csv_list, ignore_index=True)
-    merged_df.to_csv('machineLearning.csv', index=False)
+    merged_df.to_csv('finalML.csv', index=False)
     print('Tous les CSV ont été fusionnés avec succès.')
 else:
     print("Aucun fichier valide n'a pu être lu.")

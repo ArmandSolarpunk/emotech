@@ -37,7 +37,7 @@ plt.grid()
 plt.show()
     
 #GOOD BETWEEN 20 AND 60 
-"""
+
 
 
      
@@ -50,7 +50,7 @@ class_weight='balanced'
 
 clf.fit(X_train, y_train)
     
-
+"""
 
 
 """
@@ -111,11 +111,12 @@ weighted avg       0.39      0.42      0.34        36
 
 
 
-clf = LogisticRegression(random_state=808).fit(X, y)
+
 
 features = X.columns
 coefs = clf.coef_  # shape = (n_classes, n_features)
 """
+clf = LogisticRegression(random_state=808).fit(X, y)
 """
 # On met ça dans un DataFrame
 coef_df = pd.DataFrame(coefs.T, columns=[f"Class_{cls}" for cls in clf.classes_])
