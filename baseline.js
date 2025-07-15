@@ -22,8 +22,7 @@ if(version==0){
   setTableau(score,"score")
 }
   //recupératione du temps 0
-const temps=startTimer()
-console.log(temps)
+
 
 // reset des tableaux dans le local storage 
 let timestamp = []
@@ -42,6 +41,9 @@ sessionStorage.setItem("indexBoucle", index);
 
 let emotionsResentis = []
 setTableau(emotionsResentis,"emotionsResentis")
+const temps=startTimer()
+console.log(temps)
+
 // petit racourcis pour skip en cliquant sur la page  
 body.addEventListener("click",()=>{
   window.location.href = "Anonce.html"
