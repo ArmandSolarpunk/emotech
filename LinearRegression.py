@@ -9,7 +9,7 @@ import seaborn as sns
 
 
 
-data =  pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/testML.csv', on_bad_lines='skip')
+data =  pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/finalML.csv', on_bad_lines='skip')
 
 X = data[['EDA_mean','EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_IR_std','PPG_RED_mean',
           'PPG_RED_std','TEMP1_mean','TEMP1_std','PPG_IR_HR_brut_mean','PPG_IR_HR_brut_std','PPG_GRN_HR_brut_mean',
@@ -19,7 +19,7 @@ X = data[['EDA_mean','EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_I
           ]]
 
 
-y = data['arousal']
+y = data['emotion_mapped']
 
 X_train, X_test, y_train, y_test = train_test_split( X, y, train_size=0.8, random_state=808, stratify=y)
 
@@ -27,13 +27,13 @@ X_train, X_test, y_train, y_test = train_test_split( X, y, train_size=0.8, rando
 
 clf = LogisticRegression(random_state=808).fit(X_train, y_train)
 
-
+"""
 train_auc = roc_auc_score(y_train, clf.predict_proba(X_train)[:, 1])
 test_auc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])
 """
 
 train_auc = roc_auc_score(y_train, clf.predict_proba(X_train), multi_class='ovr')
-test_auc = roc_auc_score(y_test, clf.predict_proba(X_test), multi_class='ovr')"""
+test_auc = roc_auc_score(y_test, clf.predict_proba(X_test), multi_class='ovr')
 
 
 print("train",train_auc)

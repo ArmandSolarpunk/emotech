@@ -8,10 +8,11 @@ import joblib
 import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.inspection import permutation_importance
+"""
 
-
+"""
 # Charger les données
-data = pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/testML.csv')
+data = pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/finalML.csv')
 
 # Features et label
 X = data[['EDA_mean','EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_IR_std','PPG_RED_mean','PPG_RED_std',
@@ -21,7 +22,7 @@ X = data[['EDA_mean','EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_I
           'PPG_GRN_IBI_brut_mean','PPG_GRN_IBI_brut_std',
           'PPG_RED_IBI_brut_mean','PPG_RED_IBI_brut_std']]
 
-y = data['arousal']
+y = data['emotion_mapped']
 
 # Séparer en train/test
 X_train, X_test, y_train, y_test = train_test_split(X, y, stratify=y, train_size=0.8, random_state=808)
@@ -53,10 +54,10 @@ grid.fit(X_train_scaled, y_train)
 
 print("Meilleurs paramètres :", grid.best_params_)
 print("Meilleure accuracy :", grid.best_score_)
-
 """
+
 # Entraîner un SVM (noyau RBF par défaut)
-clf = SVC(probability=True, kernel='rbf', C=1, gamma=0.1, random_state=808)
+clf = SVC(probability=True, kernel='rbf', C=1, gamma=0.01, random_state=808)
 clf.fit(X_train_scaled, y_train)
 
 # Prédictions

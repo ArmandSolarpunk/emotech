@@ -8,54 +8,58 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from sklearn.inspection import permutation_importance
 
-data =  pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/testML.csv')
+data =  pd.read_csv('C:/Users/arman/Desktop/Premierprojet/data/finalML.csv')
 
 X = data[['EDA_mean','EDA_std','PPG_GRN_mean','PPG_GRN_std','PPG_IR_mean','PPG_IR_std','PPG_RED_mean','PPG_RED_std','TEMP1_mean','TEMP1_std','PPG_IR_HR_brut_mean','PPG_IR_HR_brut_std','PPG_GRN_HR_brut_mean','PPG_GRN_HR_brut_std','PPG_RED_HR_brut_mean','PPG_RED_HR_brut_std','PPG_IR_IBI_brut_mean','PPG_IR_IBI_brut_std','PPG_GRN_IBI_brut_mean','PPG_GRN_IBI_brut_std','PPG_RED_IBI_brut_mean','PPG_RED_IBI_brut_std']]
 
 
-y = data['valence']
+y = data['emotion_mapped']
 
 X_train, X_test, y_train, y_test = train_test_split( X, y, train_size=0.8, random_state=808, stratify=y)
 
-"""
+""" 
 tree_counts = [1,2,3,4,5,10,15,20,25,30,40,50, 60, 70, 80, 90, 100, 110, 120]
-tree_counts = [ 1,2,3,4,5,6,7,8,9,10]
+estimators = [ 1,2,3,4,5,6,7,8,9,10]
 accuracy  = []
-for n_estimator in tree_counts:
+for n_tree in tree_counts:
+    for n_estimators in estimators:
 
- accuracy.append(clf.score(X_test, y_test))
+    
+        accuracy.append(clf.score(X_test, y_test))
 print(accuracy)
 
 
-sns.lineplot(x=tree_counts, y=accuracy)
+sns.lineplot(accuracy)
 plt.xlabel('tree_counts')
 plt.ylabel('accuracy_score')
 plt.title('accuracy')
 plt.grid()
 plt.show()
-    
+   
 #GOOD BETWEEN 20 AND 60 
 
 """
 
 
-
-
-     
 clf = RandomForestClassifier(
-n_estimators = 10,
-max_depth = 2,
+n_estimators = 100,
+max_depth = 10,
 random_state = 8,
 class_weight='balanced'
 )
 
 clf.fit(X_train, y_train)
-"""
-train_auc = roc_auc_score(y_train, clf.predict_proba(X_train), multi_class='ovr')
-test_auc = roc_auc_score(y_test, clf.predict_proba(X_test), multi_class='ovr')
+
+
+     
 """
 train_auc = roc_auc_score(y_train, clf.predict_proba(X_train)[:, 1])
 test_auc = roc_auc_score(y_test, clf.predict_proba(X_test)[:, 1])
+"""
+train_auc = roc_auc_score(y_train, clf.predict_proba(X_train), multi_class='ovr')
+test_auc = roc_auc_score(y_test, clf.predict_proba(X_test), multi_class='ovr')
+
+
 
 print("train",train_auc)
 print("test", test_auc)
